@@ -7,6 +7,8 @@ npm install turbopuffer-sdk
 ## Usage
 
 ```js
+import { TurboPufferApiClientV1 } from 'turbopuffer-sdk'
+
 const client = new TurboPufferApiClientV1({
     token: process.env.TURBOPUFFER_KEY,
 })
