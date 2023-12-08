@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest'
-import { TurboPufferApiClient } from '.'
+import { TurboPufferApiClientV1 } from '.'
 
-const client = new TurboPufferApiClient({
+const client = new TurboPufferApiClientV1({
     token: process.env.TURBOPUFFER_KEY,
 })
 

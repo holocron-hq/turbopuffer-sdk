@@ -16,7 +16,7 @@ export class TurboPufferError extends Error {
         this.status = status
     }
 }
-export class TurboPufferApiClient<Attributes extends Record<string, any>> {
+export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
     private baseUrl: string
     token?: string
     constructor({ baseUrl = 'https://api.turbopuffer.com', token }) {
