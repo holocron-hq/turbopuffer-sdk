@@ -7,6 +7,11 @@ npm install turbopuffer-sdk
 ## Usage
 
 ```js
+const client = new TurboPufferApiClientV1({
+    token: process.env.TURBOPUFFER_KEY,
+})
+
+
 const namespace = 'test'
 const upsertRes = await client.upsertVectors({
     namespace,

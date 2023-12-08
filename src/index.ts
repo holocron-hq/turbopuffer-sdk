@@ -131,7 +131,7 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
     }
     async deleteNamespace({ namespace }: { namespace: string }): Promise<any> {
         return await this.request({
-            method: 'GET',
+            method: 'DELETE',
             path: `/v1/vectors/${namespace}`,
         })
     }
