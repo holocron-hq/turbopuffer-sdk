@@ -1,12 +1,13 @@
 {
     "name": "turbopuffer-sdk",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "repository": "https://github.com/holocron-hq/turbopuffer-sdk",
     "scripts": {
         "build": "tsc",
+        "prepublishOnly": "tsc",
         "test": "doppler run -- vitest",
         "gen": "openapi-typescript ./openapi.yaml -o ./src/api.d.ts",
         "watch": "tsc -w"
