@@ -1,0 +1,149 @@
+openapi: 3.1.0
+info:
+  title: TurboPuffer API
+  version: 1.0.0
+paths:
+  /v1/vectors/{namespace}:
+    get:
+      summary: List vectors
+      description: Exports vectors at full precision.
+      parameters:
+        - in: path
+          name: namespace
+          required: true
+          schema:
+            type: string
+          description: Namespace to export vectors from.
+        - in: query
+          name: cursor
+          schema:
+            type: string
+          description: Cursor for pagination.
+      responses:
+        "200":
+          description: A list of vectors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ids:
+                    type: array
+                    items:
+                      type: integer
+                  vectors:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: number
+                  attributes:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                  next_cursor:
+                    type: string
+                    nullable: true
+        "202":
+          description: Data not ready, retry after some time
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [error]
+                  error:
+                    type: string
+  /v1/vectors/{namespace}/query:
+    post:
+      summary: Searches vectors.
+      parameters:
+        - in: path
+          name: namespace
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vector:
+                  type: array
+                  items:
+                    type: number
+                  description: Array defining the vector to search for.
+                distance_metric:
+                  type: string
+                  enum: [cosine_distance, euclidean_squared]
+                  description: Function used to calculate vector similarity.
+                top_k:
+                  type: number
+                  default: 10
+                  description: Number of results to return.
+                filters:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: string
+                  description: Object representing filtering operations.
+                include_vectors:
+                  type: boolean
+                  default: false
+                  description: Boolean indicating if vector values should be returned.
+                include_attributes:
+                  type: array
+                  items:
+                    type: string
+                  description: List of attribute names to return in the response.
+        responses:
+          "200":
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dist:
+                        type: number
+                      id:
+                        type: integer
+                      vector:
+                        type: array
+                        items:
+                          type: number
+                        nullable: true
+                      attributes:
+                        type: object
+                        additionalProperties: true
+                        nullable: true
+                    required:
+                      - dist
+                      - id
+            "400":
+              description: Bad Request
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                      error:
+                        type: string
+                    required:
+                      - status
+                      - error

@@ -1,0 +1,31 @@
+{
+    "name": "turbopuffer-sdk",
+    "version": "0.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "repository": "https://github.com/holocron-hq/turbopuffer-sdk",
+    "scripts": {
+        "build": "tsc",
+        "test": "doppler run -- vitest",
+        "gen": "openapi-typescript ./openapi.yaml -o ./src/api.d.ts",
+        "watch": "tsc -w"
+    },
+    "files": [
+        "dist",
+        "src"
+    ],
+    "keywords": [],
+    "author": "Tommaso De Rossi, morse <beats.by.morse@gmail.com>",
+    "license": "",
+    "devDependencies": {
+        "@types/pako": "^2.0.3",
+        "fern-api": "^0.15.11",
+        "openapi-fetch": "^0.8.2",
+        "openapi-typescript-helpers": "^0.0.6",
+        "openapi-typescript": "^6.7.2"
+    },
+    "dependencies": {
+        "pako": "^2.1.0"
+    }
+}
