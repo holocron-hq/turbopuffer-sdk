@@ -142,10 +142,10 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
     }: {
         namespace: string
 
-        vector: number[]
-        distance_metric: 'cosine_distance' | 'euclidean_squared'
+        vector?: number[]
+        distance_metric?: 'cosine_distance' | 'euclidean_squared'
         top_k?: number
-        filters?: { [key: string]: string[] }
+        filters?: { [key: string]: any[] }
         include_vectors?: boolean
         include_attributes?: string[]
     }): Promise<

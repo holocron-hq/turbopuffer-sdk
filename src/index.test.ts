@@ -13,7 +13,12 @@ test('works', async () => {
     })
     console.log({ upsertRes })
     const vectors = await client.listAllVectors({ namespace })
-    console.log({ vectors })
-    const delRes = await client.deleteNamespace({ namespace })
-    console.log({ delRes })
+    const searched = await client.queryVectors({
+        namespace,
+        top_k: 1200,
+        filters: { id: [['In', [1, 2, 3]]] },
+    })
+    console.log({ vectors, searched })
+    // const delRes = await client.deleteNamespace({ namespace })
+    // console.log({ delRes })
 })
