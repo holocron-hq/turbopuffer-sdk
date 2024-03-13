@@ -8,6 +8,7 @@
     "scripts": {
         "build": "tsc",
         "prepublishOnly": "tsc",
+        "postinstall": "tsc",
         "test": "doppler run -- vitest",
         "gen": "openapi-typescript ./openapi.yaml -o ./src/api.d.ts",
         "watch": "tsc -w"
