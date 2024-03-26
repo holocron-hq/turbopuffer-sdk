@@ -9,6 +9,8 @@ type ErrorResult = {
 
 type Id = number // add string when larger numbers are added to the API
 
+type DistanceMetric = 'cosine_distance' | 'euclidean_squared'
+
 export class TurboPufferError extends Error {
     status: number
     constructor(public error: string, { status }: { status: number }) {
@@ -104,10 +106,10 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
         limit?: number
     }): Promise<
         | {
-              vector: number[]
-              id: Id
-              attributes?: Attributes
-          }[]
+            vector: number[]
+            id: Id
+            attributes?: Attributes
+        }[]
     > {
         let n = 0
         let next_cursor = undefined
@@ -143,7 +145,7 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
         namespace: string
 
         vector?: number[]
-        distance_metric?: 'cosine_distance' | 'euclidean_squared'
+        distance_metric?: DistanceMetric
         top_k?: number
         filters?: { [key: string]: any[] }
         include_vectors?: boolean
@@ -165,11 +167,20 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
     async upsertVectors({
         namespace,
         vectors,
+        ...rest
     }: {
         namespace: string
         vectors: Vector[]
+
+        // Passing this in during upsert means Turbopuffer can begin indexing
+        // the namespace sooner (i.e. can kick off the job now rather than after
+        // the first query happens).
+        distance_metric?: DistanceMetric,
     }): Promise<{ status: Status }> {
-        const requestBody = fromArrayOfVectors(vectors)
+        const requestBody = {
+            ...fromArrayOfVectors(vectors),
+            ...rest,
+        }
         return await this.request({
             method: 'POST',
             path: `/v1/vectors/${namespace}`,
@@ -198,8 +209,8 @@ function convertToArrayOfVectors(res: {
             vector: res.vectors[i],
             attributes: res.attributes
                 ? Object.fromEntries(
-                      attrEntries.map(([key, values]: any) => [key, values[i]]),
-                  )
+                    attrEntries.map(([key, values]: any) => [key, values[i]]),
+                )
                 : undefined,
         })
     }
