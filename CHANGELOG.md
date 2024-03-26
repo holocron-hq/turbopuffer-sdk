@@ -1,5 +1,17 @@
 # turbopuffer-sdk
 
+## 0.1.1
+
+### Patch Changes
+
+-   Fix postinstall script, should run only locally
+
+## 0.1.0
+
+### Minor Changes
+
+-   Added similarity search in the upsert method
+
 ## 0.0.2
 
 ### Patch Changes
