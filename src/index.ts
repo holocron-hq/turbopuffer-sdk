@@ -1,11 +1,4 @@
-import pako from 'pako'
-
 type Status = 'ok' | 'error'
-
-type ErrorResult = {
-    status: 'error'
-    error: string
-}
 
 type Id = number // add string when larger numbers are added to the API
 
@@ -13,7 +6,10 @@ type DistanceMetric = 'cosine_distance' | 'euclidean_squared'
 
 export class TurboPufferError extends Error {
     status: number
-    constructor(public error: string, { status }: { status: number }) {
+    constructor(
+        public error: string,
+        { status }: { status: number },
+    ) {
         super(error)
         this.status = status
     }
@@ -21,9 +17,19 @@ export class TurboPufferError extends Error {
 export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
     private baseUrl: string
     token?: string
-    constructor({ baseUrl = 'https://api.turbopuffer.com', token }) {
+    pako?: typeof import('pako')
+    constructor({
+        baseUrl = 'https://api.turbopuffer.com',
+        pako,
+        token,
+    }: {
+        baseUrl?: string
+        pako?: typeof import('pako')
+        token?: string
+    } = {}) {
         this.baseUrl = baseUrl
         this.token = token
+        this.pako = pako
     }
 
     async request({
@@ -62,8 +68,14 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
         }
 
         if (compress && body) {
+            if (!this.pako) {
+                throw new Error(
+                    'to enable compression you must pass pako in turbopuffer constructor',
+                )
+            }
             headers['Content-Encoding'] = 'gzip'
-            options.body = pako.gzip(JSON.stringify(body))
+
+            options.body = this.pako.gzip(JSON.stringify(body))
         } else if (body) {
             options.body = JSON.stringify(body)
         }
@@ -105,7 +117,7 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
         namespace: string
         limit?: number
     }): Promise<
-        | {
+        {
             vector: number[]
             id: Id
             attributes?: Attributes
@@ -167,15 +179,16 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
     async upsertVectors({
         namespace,
         vectors,
+        compress,
         ...rest
     }: {
         namespace: string
         vectors: Vector[]
-
+        compress?: boolean
         // Passing this in during upsert means Turbopuffer can begin indexing
         // the namespace sooner (i.e. can kick off the job now rather than after
         // the first query happens).
-        distance_metric?: DistanceMetric,
+        distance_metric?: DistanceMetric
     }): Promise<{ status: Status }> {
         const requestBody = {
             ...fromArrayOfVectors(vectors),
@@ -185,7 +198,7 @@ export class TurboPufferApiClientV1<Attributes extends Record<string, any>> {
             method: 'POST',
             path: `/v1/vectors/${namespace}`,
             body: requestBody,
-            compress: true,
+            compress,
         })
     }
 }
@@ -209,8 +222,8 @@ function convertToArrayOfVectors(res: {
             vector: res.vectors[i],
             attributes: res.attributes
                 ? Object.fromEntries(
-                    attrEntries.map(([key, values]: any) => [key, values[i]]),
-                )
+                      attrEntries.map(([key, values]: any) => [key, values[i]]),
+                  )
                 : undefined,
         })
     }
