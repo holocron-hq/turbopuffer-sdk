@@ -30,8 +30,8 @@
         "@types/pako": "^2.0.3",
         "fern-api": "^0.15.11",
         "openapi-fetch": "^0.8.2",
-        "openapi-typescript-helpers": "^0.0.6",
-        "openapi-typescript": "^6.7.2"
+        "openapi-typescript": "^6.7.2",
+        "openapi-typescript-helpers": "^0.0.6"
     },
     "dependencies": {
         "pako": "^2.1.0"
